@@ -1,0 +1,210 @@
+const input = require('sync-input')
+function CoffeeMaker(name, water, milk, coffeeBeans, price, cups) {
+  this.name = name;
+  this.water = water;
+  this.milk = milk;
+  this.coffeeBeans = coffeeBeans;
+  this.price = price;
+  this.cups = cups;
+  this.makePayment= function() {
+    coffeeMachine.money = coffeeMachine.money + this.price;
+  }
+  this.checkWater = function() {
+    if (coffeeMachine.water < this.water) {
+      console.log("Sorry, not enough water! 🥹");
+    }
+    else {
+      return true;
+    }
+  }
+  this.checkMilk = function() {
+    if (coffeeMachine.milk < this.milk) {
+      console.log("Sorry, not enough milk! 🥹");
+    }
+    else {
+      return true;
+    }
+  }
+  this.checkCoffee = function() {
+    if (coffeeMachine.coffeeBeans < this.coffeeBeans) {
+      console.log("Sorry, not enough coffee beans! 🥹");
+    }
+    else {
+      return true;
+    }
+  }
+  this.checkCups = function() {
+    if (coffeeMachine.cups < this.cups) {
+      console.log("Sorry, not enough cups! 🥹");
+    }
+    else {
+      return true;
+    }
+  }
+  this.suppliesChecker = function() {
+    if (this.checkWater() && this.checkMilk() && this.checkCoffee() && this.checkCups()) {
+      console.log("I have enough resources, brewing you a coffee! 😃 ☕️");
+      return true;
+    }
+  }
+  this.deductWater = function () {
+    return coffeeMachine.water = coffeeMachine.water - this.water;
+  }
+  this.deductMilk = function () {
+    return coffeeMachine.milk = coffeeMachine.milk - this.milk;
+  }
+  this.deductCoffee = function () {
+    return coffeeMachine.coffeeBeans = coffeeMachine.coffeeBeans - this.coffeeBeans;
+  }
+  this.deductCups = function () {
+    return coffeeMachine.cups = coffeeMachine.cups - this.cups;
+  }
+}
+
+let espresso = new CoffeeMaker("espresso", 250, 0, 16, 4, 1);
+let latte = new CoffeeMaker("latte", 350, 75, 20, 7, 1);
+let cappuccino = new CoffeeMaker("cappuccino", 200, 100, 12, 6, 1);
+
+let coffeeMachine = {
+  water: 400,
+  milk: 540,
+  coffeeBeans: 120,
+  cups: 9,
+  money: 550,
+  hazelnutSyrup: 200,
+  caramelSyrup: 200,
+  displayGreeting: function () {
+    let userName = input("Hi there! What is your name? 😃:")
+    console.log(`How are you today, ${userName}? 
+    Welcome to the MagicCoffee coffee machine! 🧋`)
+  },
+  displayRemaining: function() {
+    console.log(`The coffee machine has:
+    ${this.water} ml of water
+    ${this.milk} ml of milk
+    ${this.coffeeBeans} g of coffee beans
+    ${this.cups} disposable cups
+    $${this.money} of money`)
+  },
+  submitMoney: function() {
+   console.log(`I gave you ${this.money}`);
+   return this.money = 0;
+  },
+  addWater: function() {
+   let waterToAdd = Number(input("Write how many ml of water you want to add:"));
+   return this.water = this.water + waterToAdd;
+  },
+  addMilk: function() {
+    let milkToAdd = Number(input("Write how many ml of milk you want to add:"));
+    return this.milk = this.milk + milkToAdd;
+  },
+  addCoffeeBeans: function() {
+    let beansToAdd = Number(input("Write how many grams of coffee beans you want to add:"));
+    return this.coffeeBeans = this.coffeeBeans + beansToAdd;
+  },
+  addCups: function() {
+    let cupsToAdd = Number(input("Write how many disposable cups you want to add:"));
+    return this.cups = this.cups + cupsToAdd;
+  },
+  refillHazelnutSyrup: function () {
+    let syrupToAdd = Number(input("Write how many ml of hazelnut syrup you want to add:"));
+    return this.hazelnutSyrup += syrupToAdd;
+  },
+  refillCaramelSyrup: function () {
+    let syrupToAdd = Number(input("Write how many ml of hazelnut syrup you want to add:"));
+    return this.caramelSyrup += syrupToAdd;
+    },
+  addSyrup: function(flavor) {
+    switch (flavor) {
+      case "hazelnut":
+        if (this.hazelnutSyrup < 20) {
+          console.log("Sorry, not enough hazelnut syrup! 🥹");
+          break;
+        }
+        else {
+          return this.hazelnutSyrup -= 20;
+        }
+      case "caramel":
+        if (this.caramelSyrup < 20) {
+          console.log("Sorry, not enough caramel syrup! 🥹");
+          break;
+        }
+        else {
+          return this.caramelSyrup -= 20;
+        }
+    }
+  }
+}
+
+let userChoice;
+let operate = true;
+
+while (operate === true) {
+  coffeeMachine.displayGreeting();
+  userChoice = input("Write action (buy, fill, take, remaining, exit):");
+  switch (userChoice) {
+    case "buy":
+      let buyChoice = input("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
+        switch (buyChoice) {
+          case "1":
+            espresso.suppliesChecker();
+            if (espresso.suppliesChecker()) {
+              espresso.deductWater();
+              espresso.deductCoffee();
+              espresso.deductCups();
+              espresso.makePayment();
+            }
+            break;
+          case "2":
+            latte.suppliesChecker();
+            if (latte.suppliesChecker()) {
+              let addlFlavor = input("Would you like to add some syrup? 1 - yes; 2 - no:");
+              if (addlFlavor === "1") {
+                let flavorChoice = input("1 - hazelnut, 2 - caramel, 3 - no syrup");
+                switch(flavorChoice) {
+                  case "1":
+                    coffeeMachine.addSyrup("hazelnut");
+                    break;
+                  case "2":
+                    coffeeMachine.addSyrup("caramel");
+                    break;
+                }
+              }
+              latte.deductWater();
+              latte.deductMilk();
+              latte.deductCoffee();
+              latte.deductCups();
+              latte.makePayment();
+            }
+            break;
+          case "3":
+            cappuccino.suppliesChecker();
+            if (cappuccino.suppliesChecker()) {
+              cappuccino.deductWater();
+              cappuccino.deductMilk();
+              cappuccino.deductCoffee();
+              cappuccino.deductCups();
+              cappuccino.makePayment();
+            }
+            break;
+        }
+      console.log("Enjoy your coffee! 😃")
+      break;
+    case "take":
+      coffeeMachine.submitMoney();
+      break;
+    case "fill":
+      coffeeMachine.addWater();
+      coffeeMachine.addMilk();
+      coffeeMachine.addCoffeeBeans();
+      coffeeMachine.addCups();
+      coffeeMachine.refillCaramelSyrup();
+      coffeeMachine.refillHazelnutSyrup();
+      break;
+    case "remaining":
+      coffeeMachine.displayRemaining();
+      break;
+    case "exit":
+      operate = false;
+  }
+}
